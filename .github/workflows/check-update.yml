@@ -43,10 +43,10 @@ jobs:
         run: |
           echo "Comparing Local: $CURRENT_SHA with Remote: $LATEST_SHA"
           if [ "$CURRENT_SHA" == "$LATEST_SHA" ]; then
-            echo "No update, skipping"
+            echo "There are no new commits, so feel free to enjoy your day."
             echo "SKIP=true" >> $GITHUB_ENV
           else
-            echo "Update available, triggering build"
+            echo "With this new commit, it's time to get to work!"
             echo "SKIP=false" >> $GITHUB_ENV
           fi
 
