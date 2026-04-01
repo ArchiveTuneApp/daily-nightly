@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "abc3534110e8ed7f7bef6b50b06ac7bdf8fd5212",
-    "message": "chore(MainActivity): migrate floating action to old navbar"
+    "sha": "d8a3a90390c41b95247b1fa4e18712a04d37178e",
+    "message": "feat(YTPlayerUtils): enhance playback login context handling with new exceptions and response methods"
   }
 }
