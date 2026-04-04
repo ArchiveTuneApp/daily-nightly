@@ -13,12 +13,5 @@ jobs:
       contents: write
     steps:
       - name: 🔄 Check for update
-        uses: actions/github-script@v8
-        with:
-          script: |
-            github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'check-for-update',
-              client_payload: {}
-            })
+        run: |
+          echo "Check for update activited!!!"
