@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "2f27102d4942616c99545c23c5e389cd73a2e603",
-    "message": "fix(Components): remove shape conflict"
+    "sha": "be1352abc2ea4c04049f71f44b989aa08af527b2",
+    "message": "fix(PlayerResponse): make expiresInSeconds nullable with default value #433"
   }
 }
