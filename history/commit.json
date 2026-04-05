@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "81c25bc5bdc6e0bf86e91c65e67855c37d58a4d7",
-    "message": "Merge branch 'main' into dev"
+    "sha": "bbdc2dea01145d2feb669b2d9cefd3748936e395",
+    "message": "fix(SelectionSongsMenu): optimize song liking logic and improve transaction handling"
   }
 }
