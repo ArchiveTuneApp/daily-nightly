@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "bd9819a16a185b0baa9002b68bd4b450862618c9",
-    "message": "fix(LibraryMixScreen): increase library shortcut card height and adjust layout"
+    "sha": "913fddf35368002774978d143fbdd13a767c94a3",
+    "message": "fix(PlaybackAuthPreferences): import missing datastore edit method"
   }
 }
