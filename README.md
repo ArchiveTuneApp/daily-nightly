@@ -231,7 +231,7 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
     </tr>
     <tr>
       <th align="center">OpenAPK</th>
-      <th align="center">Doyo.cn</th>
+      <th align="center">Unclouded</th>
     </tr>
     <tr>
       <td align="center">
@@ -240,8 +240,8 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
         </a>
       </td>
       <td align="center">
-        <a href="https://m.doyo.cn/app/539242.html">
-          <img src="https://raw.githubusercontent.com/koiverse/ArchiveTune/refs/heads/dev/assets/badge_doyo.png" height="50" alt="Get ArchiveTune on Doyo.cn">
+        <a href="https://unclouded.app/apps/archivetune/">
+          <img src="https://raw.githubusercontent.com/koiverse/ArchiveTune/refs/heads/dev/assets/badge_unclouded.png" height="50" alt="Get ArchiveTune on Unclouded">
         </a>
       </td>
     </tr>
@@ -266,9 +266,10 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
     </tr>
   </tbody>
 </table>
-
 </div>
 
+> [!WARNING]  
+> **Notes:** The trusted download source is listed above; we are not responsible for any risks you may encounter from downloading from other sources.
 
 ## ❓ Need Help or Have Questions?
 Join Our Telegram Channels for Support and Discussion.
@@ -298,6 +299,15 @@ Interested in building the project or contributing? ArchiveTune is built on a hi
 
 ---
 
+### ⭐ Support the Project
+ArchiveTune is free and open-source. If it brings you joy, consider supporting its development!
+##### Tribe
+<a href="https://sociabuzz.com/chrtrxwstia">
+  <img src="https://github.com/koiverse/ArchiveTune/blob/dev/assets/tribe.png?raw=true" alt="Buy Me a Coffee" width="160" />
+</a>
+
+---
+
 ## 🤝 Acknowledgments
 
 We stand on the shoulders of open-source giants:
@@ -324,7 +334,7 @@ ArchiveTune is an independent third-party client.
   <img src="https://raw.githubusercontent.com/koiverse/ArchiveTune/refs/heads/dev/fastlane/metadata/android/en-US/images/ArchiveTuneFull.png" alt="ArchiveTune Banner" style="width: 100%; max-width: 500px;">
   <p><b>If ArchiveTune elevated your music experience, please consider giving us a ⭐</b></p>
   <br />
-  <img src="https://raw.githubusercontent.com/koiverse/ArchiveTune/refs/heads/dev/assets/badge_part.png" alt="ArchiveTune Banner" width="160" height="160">
+  <img src="https://raw.githubusercontent.com/koiverse/ArchiveTune/refs/heads/dev/assets/badge_part.png" alt="ArchiveTune Banner" style="width: 160px">
 </div>
 
 
