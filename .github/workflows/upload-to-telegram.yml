@@ -17,7 +17,10 @@ env:
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+  API_ID: ${{ secrets.TELEGRAM_API_ID }}
+  API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
   RELEASE_TAG: ${{ github.event.workflow_run.release_tag || '' }}
+  GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
 jobs:
   notify-telegram:
@@ -49,29 +52,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      - name: ☕ Setup Java
-        uses: actions/setup-java@v5
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
         with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: 🐘 Setup Kotlin
+          python-version: '3.12'
+          
+      - name: 📦 Install dependencies
         run: |
-          # Install Kotlin compiler manually using SDKMAN or download directly
-          curl -s "https://get.sdkman.io" | bash
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk install kotlin 1.9.24
-          echo "$HOME/.sdkman/candidates/kotlin/current/bin" >> $GITHUB_PATH
+          python -m pip install --upgrade pip
+          pip install telethon requests
 
-      - name: 💻 Send Telegram notification
+      - name: 📱 Send Telegram notification
         run: |
-          kotlin scripts/send-telegram.main.kts
+          python3 scripts/send-telegram-py/main.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
-          RELEASE_TAG: ${{ env.RELEASE_TAG }}
+          API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Summary
         run: |
