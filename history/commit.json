@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "913fddf35368002774978d143fbdd13a767c94a3",
-    "message": "fix(PlaybackAuthPreferences): import missing datastore edit method"
+    "sha": "48bc233dd317d5c64170a431983013a4c3d99173",
+    "message": "refactor(LocalSongScreen): add verticalScroll to LocalSongScanSheet modifier"
   }
 }
