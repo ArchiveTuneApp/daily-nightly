@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "48bc233dd317d5c64170a431983013a4c3d99173",
-    "message": "refactor(LocalSongScreen): add verticalScroll to LocalSongScanSheet modifier"
+    "sha": "66fff26c23e6152f7899d99f47c665165d76eb60",
+    "message": "refactor(FloatingNavigationToolbar): implement AnimatedContent and FloatingToolbarActionState for state transitions"
   }
 }
