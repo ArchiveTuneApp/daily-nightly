@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "66fff26c23e6152f7899d99f47c665165d76eb60",
-    "message": "refactor(FloatingNavigationToolbar): implement AnimatedContent and FloatingToolbarActionState for state transitions"
+    "sha": "52b80e6177d046339f7c69857d0ca3eb4fc53af1",
+    "message": "fix(MoodAndGenresScreen): replace matchParentSize with fillMaxSize for better layout handling"
   }
 }
