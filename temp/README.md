@@ -71,21 +71,6 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
 | `CANVAS_BEARER_TOKEN` | Another unkown env but maybe for canvas, new backend? IDK... |
 | `PAT_TOKEN` | GitHub [Personal Access Token](https://github.com/settings/personal-access-token) with `Actions` (trigger/run workflows), `Contents` (commit, push, create release), and optionally `Workflows` (cancel failed builds) permissions. |
 
-**Optional secrets (for Telegram notifications):**
-
-| Secret | Description |
-|--------|-------------|
-| `TELEGRAM_BOT_TOKEN` | Telegram Bot API token. Create a bot via [@BotFather](https://t.me/BotFather) to get the token. |
-| `TELEGRAM_CHAT_ID` | Telegram chat ID for the target group or channel. For private groups, forward a message to [@userinfobot](https://t.me/userinfobot) to get the ID. |
-| `TELEGRAM_THREAD_ID` | Thread ID for Telegram topics/threads in supergroups. Only needed if posting to a specific thread in a group. |
-| `TELEGRAM_API_ID` | Telegram API ID from [my.telegram.org](https://my.telegram.org). Required for MTProto upload (sending large files). |
-| `TELEGRAM_API_HASH` | Telegram API Hash from [my.telegram.org](https://my.telegram.org). Required for MTProto upload. |
-
-> [!NOTE]
-> - Telegram notifications use **Telethon (MTProto)** which allows sending all APK files in a **single message** without the 50MB limit of the Bot API.
-> - `TELEGRAM_API_ID` and `TELEGRAM_API_HASH` are **required** for the current notification script.
-> - Get these credentials from [my.telegram.org](https://my.telegram.org) under "API development tools".
-
 ---
 
 <div align="center">
