@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "89ecb1ff73755511837ea4d569eef7e0ea6d2467",
-    "message": "fix(MoodAndGenresScreen): increase button sizes for improved touch targets"
+    "sha": "59df744ebc2c4f951ef38d6ca7f7652ce8f70d8a",
+    "message": "Merge pull request #487 from koiverse/renovate/agp\n\nfix(deps): update agp to v9.2.0"
   }
 }
