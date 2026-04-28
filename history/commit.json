@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "d698ece98b4c77730097965db7586c399280c281",
-    "message": "Merge pull request #516 from sang765/lyrics/paxsenix\n\nfeat(Lyric): Enhance Paxsenix integration with new providers and API stats"
+    "sha": "1c51fa9b2baffc84112fe60a2b2270a2120ee357",
+    "message": "Merge pull request #522 from sang765/player/lyrics/clearcache\n\nfeat(Lyrics): add clear all lyrics cache functionality with confirmation dialog"
   }
 }
