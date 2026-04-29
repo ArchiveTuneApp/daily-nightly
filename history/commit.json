@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "1c51fa9b2baffc84112fe60a2b2270a2120ee357",
-    "message": "Merge pull request #522 from sang765/player/lyrics/clearcache\n\nfeat(Lyrics): add clear all lyrics cache functionality with confirmation dialog"
+    "sha": "3dd1f18491b8999fdf6101ea3638e0308263499b",
+    "message": "refactor(MusicService): streamline notification handling and remove deprecated notification creation logic"
   }
 }
