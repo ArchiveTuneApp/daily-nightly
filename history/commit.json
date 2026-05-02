@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "3e586a6faa9c2784d36dd5293386a895aff7a0d8",
-    "message": "refactor(Theme): integrate color scheme management and enhance dynamic theming support"
+    "sha": "f37b68c823f227e25c587dc6045199d07a4fe158",
+    "message": "fix(ic_launcher_background): change launcher background color to white for android 16 v31 adaptive icon"
   }
 }
