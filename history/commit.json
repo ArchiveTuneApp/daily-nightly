@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "1baefbf204fa3ea229e3558d8ad6eee044ac59ce",
-    "message": "UwU nekos cute"
+    "sha": "ac0ab2334559af425561fafa3f862dc96cbcff69",
+    "message": "refactor(notify_user): simplify push event triggers in workflow configuration"
   }
 }
