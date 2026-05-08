@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "29e84fd158a8fe3c236963db9f1fdf97d554ecff",
-    "message": "remove hint"
+    "sha": "c4c54d4acb78583c50b46b7cef7bd586323097db",
+    "message": "fix(deps): update dependency androidx.compose.material3:material3 to v1.5.0-alpha19 (#570)\n\nCo-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>\nCo-authored-by: しゃるとりゅー <107134739+koiverse@users.noreply.github.com>"
   }
 }
