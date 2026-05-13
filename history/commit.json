@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "e49288dcc886e0e379ab19008345d834d62cdaa8",
-    "message": "feat(BackupRestoreViewModel): add backup category selection for library, account, and settings"
+    "sha": "522819ca6a75666c1a8b1fe53501fe6eabb64a74",
+    "message": "fix(ArchiveTuneIconPack): update subproject commit reference"
   }
 }
