@@ -65,7 +65,8 @@ jobs:
           MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
 
           > - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
-          > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG"
+          > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
+          > - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
 
           # Create JSON payload using jq to avoid escaping issues
           PAYLOAD=$(jq -n --arg msg "$MESSAGE" '{content: $msg}')
