@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows:
       - Update Release Note
+      - update-release-notes
     types:
       - completed
 
