@@ -12,6 +12,8 @@
 [![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/sang765/ArchiveTune-Nightly/total?style=for-the-badge&label=DOWNLOAD%20COUNT&labelColor=1e1e2e&color=ff00ff&logo=downdetector)](https://github.com/sang765/ArchiveTune-Nightly/releases)
 [![GitHub Release](https://img.shields.io/github/v/release/sang765/ArchiveTune-Nightly?display_name=release&style=for-the-badge&label=LATEST%20RELEASE&logo=Github&color=000fa0&labelColor=1e1e2e)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
 [![GitHub License](https://img.shields.io/github/license/sang765/ArchiveTune-Nightly?style=for-the-badge&labelColor=1e1e2e&logo=gplv3&logoColor=%23BD0000&color=%23BD0000)](./LICENSE)  
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/ArchiveTuneGC)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/XF2fpb9rTq)  
 
 </div>
 
@@ -19,7 +21,7 @@
 
 <div align="center">
 
-[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/5.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/1.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/5.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
+[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/5.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/1.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/8.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
 
 | Stable | Nightly |
 |----------|---------|
