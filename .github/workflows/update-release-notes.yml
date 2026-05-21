@@ -173,8 +173,10 @@ jobs:
             exit 0
           fi
           
+          SHA_7CHARS=$(jq -r '.commit.sha' history/commit.json | cut -c1-7)
+          
           git add history/commit.json
-          git commit -m "chore: update history pointer [skip ci]"
+          git commit -m "chore: update history pointer to $SHA_7CHARS [skip ci]"
           
           # Pull latest changes to avoid conflicts
           git pull --rebase origin ${{ github.ref_name }} || git pull --rebase origin main
