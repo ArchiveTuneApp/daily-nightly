@@ -14,7 +14,7 @@ jobs:
       contents: write
     steps:
       - name: 🔎 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🔎 Check for new commits in the last 24h
         id: check_commits
