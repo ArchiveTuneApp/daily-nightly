@@ -136,6 +136,8 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         .withZone(ZoneId.of("UTC")) // Timezone
 
+    val authorCommitCounts = mutableMapOf<String, Int>()
+
     for (commit in commitList) {
         try {
             // Safely get SHA
@@ -189,6 +191,9 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 "Unknown"
             }
 
+            // Update commit counts
+            authorCommitCounts[author] = (authorCommitCounts[author] ?: 0) + 1
+
             // Format date and time
             val date = try {
                 if (!commitDetails.has("author") || commitDetails.get("author").isJsonNull) {
@@ -213,6 +218,32 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             log("Warning: Error processing commit: ${e.message}")
             e.printStackTrace()
             continue
+        }
+    }
+    
+    // Add MVP section if there are authors
+    if (authorCommitCounts.isNotEmpty()) {
+        val sortedAuthors = authorCommitCounts.entries.sortedByDescending { it.value }
+        val topAuthor = sortedAuthors.first()
+        
+        sb.append("\n")
+        sb.append("## 🏆 MVP Committer\n")
+        sb.append("\n")
+        sb.append("Congratulations to **@${topAuthor.key}** for contributing **${topAuthor.value}** commit(s) in this release! 🎉\n")
+        
+        if (sortedAuthors.size > 1) {
+            sb.append("\n")
+            sb.append("### 📊 Contribution Leaderboard\n")
+            sb.append("\n")
+            for ((index, entry) in sortedAuthors.withIndex()) {
+                val medal = when(index) {
+                    0 -> "🥇"
+                    1 -> "🥈"
+                    2 -> "🥉"
+                    else -> "👤"
+                }
+                sb.append("$medal **@${entry.key}**: ${entry.value} commit(s)\n")
+            }
         }
     }
     
