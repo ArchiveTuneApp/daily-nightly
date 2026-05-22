@@ -5,11 +5,11 @@ on:
     workflows: ["Update Release Notes", "update-release-notes"]
     types:
       - completed
-  workflow_dispatch:
+  workflow_dispatch: 
 
 jobs:
   notify:
-    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'workflow_dispatch')
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     steps:
       - name: Check WEBHOOK_URL is set
@@ -20,150 +20,64 @@ jobs:
           fi
 
       - name: Wait for release to be available
-        run: sleep 5
+        run: |
+          # Give GitHub API a moment to process the new release
+          sleep 3
 
       - name: Get latest release
         id: get_release
         run: |
-          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN || github.token }}" \
+          # Fetch the latest release
+          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
-
+          
+          # Check if we got an error response
           if echo "$LATEST_RELEASE" | jq -e '.message' > /dev/null 2>&1; then
-            echo "Error fetching release: $(echo "$LATEST_RELEASE" | jq -r '.message')"
+            ERROR_MSG=$(echo "$LATEST_RELEASE" | jq -r '.message')
+            echo "Error fetching release: $ERROR_MSG"
             exit 1
           fi
-
+          
+          # Extract the name and tag
           VERSION_TITLE=$(echo "$LATEST_RELEASE" | jq -r '.name')
           RELEASE_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
-          RELEASE_BODY=$(echo "$LATEST_RELEASE" | jq -r '.body')
-
+          
+          # Validate that we got valid data
           if [ -z "$VERSION_TITLE" ] || [ "$VERSION_TITLE" = "null" ]; then
             echo "Error: Could not extract version title from release"
             exit 1
           fi
-
+          
           if [ -z "$RELEASE_TAG" ] || [ "$RELEASE_TAG" = "null" ]; then
             echo "Error: Could not extract release tag from release"
             exit 1
           fi
-
+          
+          # Set outputs
           echo "version_title=$VERSION_TITLE" >> $GITHUB_OUTPUT
           echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
-          {
-            echo "release_body<<EOF"
-            echo "$RELEASE_BODY"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
+          
           echo "✓ Successfully retrieved release: $VERSION_TITLE ($RELEASE_TAG)"
 
-      - name: 🤖 Generate AI summary
-        id: ai_summary
-        if: secrets.GEMINI_API_KEY != ''
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          RELEASE_BODY: ${{ steps.get_release.outputs.release_body }}
-          VERSION_TITLE: ${{ steps.get_release.outputs.version_title }}
+      - name: Send Discord notification
         run: |
-          ESCAPED_BODY=$(echo "$RELEASE_BODY" | jq -Rs .)
-
-          PROMPT="Summarize the following release notes for ArchiveTune Nightly: $VERSION_TITLE.
-          Create a short, emoji-rich summary (2-4 bullet points) highlighting the key changes.
-          Use format like: ✨ Feature, 🐞 Fix, 🚀 Improvement.
-          Keep it under 1500 characters.
-          Use markdown bullet points (- or *). Do NOT use markdown headings.
-          $ESCAPED_BODY"
-
-          MAX_RETRIES=3
-          RETRY_COUNT=0
-          WAIT_TIME=15
-
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GEMINI_API_KEY" \
-              -H 'Content-Type: application/json' \
-              -d "{
-                \"contents\": [{
-                  \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
-                }]
-              }")
-
-            ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
-
-            if [ -z "$ERROR" ]; then
-              break
-            fi
-
-            if echo "$RESPONSE" | jq -e '.error.code == 429' > /dev/null; then
-              echo "Rate limit exceeded (429). Retrying in ${WAIT_TIME}s... (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
-              sleep $WAIT_TIME
-              RETRY_COUNT=$((RETRY_COUNT + 1))
-              WAIT_TIME=$((WAIT_TIME * 2))
-            else
-              echo "API Error: $ERROR"
-              break
-            fi
-          done
-
-          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
-
-          if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
-            echo "AI summarization failed or returned empty."
-            echo "summary=" >> $GITHUB_OUTPUT
-          else
-            {
-              echo "summary<<EOF"
-              echo "$AI_TEXT"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-          fi
-
-      - name: 📤 Send Discord notification (markdown)
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          VERSION_TITLE: ${{ steps.get_release.outputs.version_title }}
-          RELEASE_TAG: ${{ steps.get_release.outputs.release_tag }}
-          AI_SUMMARY: ${{ steps.ai_summary.outputs.summary }}
-          DISCORD_MENTION_ROLE: ${{ secrets.DISCORD_MENTION_ROLE }}
-        run: |
-          RELEASE_URL="https://github.com/${{ github.repository }}/releases/$RELEASE_TAG"
-
-          # Build markdown message
-          if [ -n "$AI_SUMMARY" ]; then
-            BODY="$AI_SUMMARY"
-          else
-            BODY="- Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. Check the link for changelog and downloads!"
-          fi
-
-          MESSAGE="# $VERSION_TITLE
-$BODY
-
-**Link:** $RELEASE_URL
-$DISCORD_MENTION_ROLE"
-
-          # Enforce 2000 character limit
-          if [ "${#MESSAGE}" -gt 2000 ]; then
-            EXCESS=$(( ${#MESSAGE} - 2000 ))
-            echo "Message too long (${#MESSAGE} chars). Truncating by $EXCESS chars..."
-            # Truncate body to fit
-            MAX_BODY_LEN=$(( ${#BODY} - EXCESS - 10 ))
-            if [ "$MAX_BODY_LEN" -lt 20 ]; then
-              MAX_BODY_LEN=20
-            fi
-            TRUNCATED_BODY="$(echo "$BODY" | head -c $MAX_BODY_LEN)..."
-            MESSAGE="# $VERSION_TITLE
-$TRUNCATED_BODY
-
-**Link:** $RELEASE_URL
-$DISCORD_MENTION_ROLE"
-            echo "Truncated to ${#MESSAGE} chars"
-          fi
-
-          # Build JSON payload
-          PAYLOAD=$(jq -c -n --arg msg "$MESSAGE" '{content: $msg}')
-
-          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK_URL")
+          VERSION_TITLE="${{ steps.get_release.outputs.version_title }}"
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          
+          # Construct the message
+          MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
+          
+          > - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
+          > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
+          > - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
+          
+          # Create JSON payload using jq to avoid escaping issues
+          PAYLOAD=$(jq -n --arg msg "$MESSAGE" '{content: $msg}')
+          
+          # Send to Discord
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.WEBHOOK_URL }}")
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-
+          
           if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
             echo "✓ Discord notification sent successfully"
           else
