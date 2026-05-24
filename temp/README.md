@@ -153,3 +153,15 @@ You can set 1 second if you can't wait.
 - Latest dev build in **ArchiveTune** repository:  
   [![Latest Dev Branch Workflow Build](https://img.shields.io/github/actions/workflow/status/koiverse/ArchiveTune/build.yml?branch=dev&style=for-the-badge&logo=githubactions&logoColor=ffffff&label=Last%20DEV%20Build&labelColor=1e1e2e&color=6366f1)](https://github.com/koiverse/ArchiveTune/actions/workflows/build.yml?query=branch%3Adev)
 - [ArchiveTune Repository](https://github.com/koiverse/ArchiveTune)
+
+## Certificate fingerprints
+
+The following fingerprints are for the signing certificate used to sign all ArchiveTune Nightly releases.
+
+```plaintext
+<!-- CERT_FINGERPRINT_SHA1 -->
+```
+
+```plaintext
+<!-- CERT_FINGERPRINT_SHA256 -->
+```

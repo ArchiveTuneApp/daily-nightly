@@ -78,6 +78,37 @@ jobs:
           # Also update the URL in the link
           sed -i "s|github.com/sang765/ArchiveTune-Nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
 
+      - name: 🔐 Update certificate fingerprints from signed APK
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+        run: |
+          # Download universal APK from latest release
+          gh release download latest \
+            --repo ${{ github.repository }} \
+            --pattern 'app-mobile-universal-nightly.apk' \
+            --output /tmp/app.apk 2>/dev/null || {
+            echo "No release APK found yet - skipping fingerprint update"
+            exit 0
+          }
+
+          # Extract certificate fingerprints
+          CERT_INFO=$(keytool -printcert -jarfile /tmp/app.apk 2>/dev/null)
+
+          SHA1=$(echo "$CERT_INFO" | grep -i "SHA1:" | sed 's/.*SHA1: //' | xargs || true)
+          SHA256=$(echo "$CERT_INFO" | grep -i "SHA256:" | sed 's/.*SHA256: //' | xargs || true)
+
+          if [ -n "$SHA1" ] && [ -n "$SHA256" ]; then
+            echo "Extracted SHA-1:   $SHA1"
+            echo "Extracted SHA-256: $SHA256"
+
+            sed -i "s|<!-- CERT_FINGERPRINT_SHA1 -->|$SHA1|g" README.md
+            sed -i "s|<!-- CERT_FINGERPRINT_SHA256 -->|$SHA256|g" README.md
+
+            echo "✅ Updated certificate fingerprints in README.md"
+          else
+            echo "⚠️ Could not extract fingerprints, keeping placeholders"
+          fi
+
       - name: 🔄 Check for changes and commit
         run: |
           # Check if there are changes to commit
