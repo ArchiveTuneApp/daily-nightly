@@ -130,13 +130,28 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+      - name: 🔄 Resolve version
+        id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+        run: |
+          VERSION="${{ github.event.client_payload.new_version || github.event.inputs.new_version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION=$(gh release view latest --repo ${{ github.repository }} --json tagName --jq .tagName 2>/dev/null || echo "")
+            if [ -z "$VERSION" ]; then
+              echo "No releases found" && exit 1
+            fi
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $VERSION"
+
       - name: 🔄 Update release notes
         env:
           SUMMARY: ${{ steps.ai_summary.outputs.summary }}
           CHANGELOG: ${{ steps.changelog.outputs.changelog }}
           DATE: ${{ steps.date.outputs.date }}
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
-          VERSION: ${{ github.event.client_payload.new_version || github.event.inputs.new_version || 'nightly-latest' }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           echo "Release **ArchiveTune Nightly** artifact, generated on **$DATE (UTC +0)**" > release_body.md
           echo "" >> release_body.md
