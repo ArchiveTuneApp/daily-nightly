@@ -137,10 +137,7 @@ jobs:
           DATE: ${{ steps.date.outputs.date }}
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
         run: |
-          VERSION="${{ github.event.client_payload.new_version || github.event.inputs.new_version || 'nightly-latest' }}"
           echo "Release **ArchiveTune Nightly** artifact, generated on **$DATE (UTC +0)**" > release_body.md
-          echo "" >> release_body.md
-          echo "[![Download count](https://img.shields.io/github/downloads/${{ github.repository }}/$VERSION/total?style=flat-square&logo=Github&logoSize=20&label=DOWNLOAD%20COUNT%20FOR%20$VERSION&labelColor=001111&color=009900)](https://github.com/${{ github.repository }}/releases/$VERSION)" >> release_body.md
           echo "" >> release_body.md
           if [ -n "$SUMMARY" ]; then
             echo "$SUMMARY" >> release_body.md
@@ -151,4 +148,4 @@ jobs:
           echo "> [!NOTE]" >> release_body.md
           echo "> If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you." >> release_body.md
           
-          gh release edit "$VERSION" --notes-file release_body.md
+          gh release edit ${{ github.event.client_payload.new_version || github.event.inputs.new_version || 'nightly-latest' }} --notes-file release_body.md
