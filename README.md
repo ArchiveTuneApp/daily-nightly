@@ -32,6 +32,48 @@
 > [!WARNING]
 > - We **DO NOT ACCEPT** any issues, bug reports, or new ideas on "this repository". If you wanna create an issue or bug report, please create it [here](https://github.com/koiverse/ArchiveTune/issues/new/choose).
 
+<div align="center">
+
+### ⚒️ Build ⚒️
+
+</div>
+
+- For nightly builds, see `.github/workflows/nightly-build.yml`
+
+<div align="center">
+
+### 🔰 License 🔰
+
+[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)
+
+</div>
+
+<div align="center">
+
+### 🔐 Certificate fingerprints 🔐
+
+The following fingerprints are for the signing certificate used to sign all ArchiveTune Nightly releases.
+
+```plaintext
+FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
+```
+
+```plaintext
+3A:97:D1:35:BC:92:82:8D:13:C3:47:BE:42:48:8C:99:01:DD:A7:11:87:AF:95:E2:F8:A8:F0:96:34:C7:0A:1D
+```
+
+</div>
+
+<div align="center">
+
+### 🔗 Links 🔗
+
+</div>
+
+- Latest dev build in **ArchiveTune** repository:  
+  [![Latest Dev Branch Workflow Build](https://img.shields.io/github/actions/workflow/status/koiverse/ArchiveTune/build.yml?branch=dev&style=for-the-badge&logo=githubactions&logoColor=ffffff&label=Last%20DEV%20Build&labelColor=1e1e2e&color=6366f1)](https://github.com/koiverse/ArchiveTune/actions/workflows/build.yml?query=branch%3Adev)
+- [ArchiveTune Repository](https://github.com/koiverse/ArchiveTune)
+
 This repository contains the nightly build setup for ArchiveTune, an advanced YouTube Music client for Android. Read bellow to read more about this app.
 
 <div align="center">
@@ -109,47 +151,3 @@ You can set 1 second if you can't wait.
 > [!TIP]
 > - The workflow uses `repository_dispatch` trigger, so the external cron service needs a PAT token with `repo` scope to send the dispatch event.
 > - Alternatively, you can use GitHub's built-in scheduler by adding a `schedule` trigger to the workflow, but the external cron-job.org method gives you more control.
-
----
-
-<div align="center">
-
-### ⚒️ Build ⚒️
-
-</div>
-
-- For nightly builds, see `.github/workflows/nightly-build.yml`
-
-<div align="center">
-
-### 🔰 License 🔰
-
-[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)
-
-</div>
-
-<div align="center">
-
-### 🔐 Certificate fingerprints 🔐
-
-The following fingerprints are for the signing certificate used to sign all ArchiveTune Nightly releases.
-
-```plaintext
-FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
-```
-
-```plaintext
-3A:97:D1:35:BC:92:82:8D:13:C3:47:BE:42:48:8C:99:01:DD:A7:11:87:AF:95:E2:F8:A8:F0:96:34:C7:0A:1D
-```
-
-</div>
-
-<div align="center">
-
-### 🔗 Links 🔗
-
-</div>
-
-- Latest dev build in **ArchiveTune** repository:  
-  [![Latest Dev Branch Workflow Build](https://img.shields.io/github/actions/workflow/status/koiverse/ArchiveTune/build.yml?branch=dev&style=for-the-badge&logo=githubactions&logoColor=ffffff&label=Last%20DEV%20Build&labelColor=1e1e2e&color=6366f1)](https://github.com/koiverse/ArchiveTune/actions/workflows/build.yml?query=branch%3Adev)
-- [ArchiveTune Repository](https://github.com/koiverse/ArchiveTune)
