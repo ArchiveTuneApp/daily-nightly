@@ -1,0 +1,498 @@
+{
+  "nodes": [
+    {
+      "id": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "type": "pipeline",
+      "name": "Daily Nightly Build",
+      "filePath": ".github/workflows/daily-nightly-build.yml",
+      "summary": "Main CI pipeline that checks out ArchiveTune source, patches version/package names for nightly, builds signed APKs across 6 architecture variants (arm64, armeabi, x86, x86_64, mobile universal, TV universal), uploads artifacts, and creates a GitHub release with changelog.",
+      "tags": [
+        "ci-cd",
+        "deployment",
+        "build-automation",
+        "android",
+        "nightly"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "pipeline:.github/workflows/check-update.yml",
+      "type": "pipeline",
+      "name": "Check for Updates",
+      "filePath": ".github/workflows/check-update.yml",
+      "summary": "Checks the upstream koiverse/ArchiveTune dev branch for new commits in the last 24 hours. If commits exist, triggers the nightly build via repository dispatch.",
+      "tags": [
+        "ci-cd",
+        "update-check",
+        "scheduling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "pipeline:.github/workflows/trigger.yml",
+      "type": "pipeline",
+      "name": "Trigger Workflows",
+      "filePath": ".github/workflows/trigger.yml",
+      "summary": "Simple workflow_dispatch entry point triggered by an external cron service (cron-job.org) to avoid GitHub Actions scheduling delays.",
+      "tags": [
+        "ci-cd",
+        "scheduling",
+        "cron"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "pipeline:.github/workflows/sync-readme.yml",
+      "type": "pipeline",
+      "name": "Sync README",
+      "filePath": ".github/workflows/sync-readme.yml",
+      "summary": "Syncs README from temp/README.md template, fetches upstream README/CONTRIBUTING from koiverse/ArchiveTune, updates version counter GIFs, and pushes changes to main.",
+      "tags": [
+        "ci-cd",
+        "documentation",
+        "automation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "pipeline:.github/workflows/update-release-notes.yml",
+      "type": "pipeline",
+      "name": "Update Release Notes",
+      "filePath": ".github/workflows/update-release-notes.yml",
+      "summary": "Generates changelog via GitHub API and Kotlin script, optionally summarizes with Gemini AI, then edits the GitHub release notes with categorized formatting.",
+      "tags": [
+        "ci-cd",
+        "release-notes",
+        "changelog",
+        "ai-summarization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "pipeline:.github/workflows/discord-notify.yml",
+      "type": "pipeline",
+      "name": "Discord Notification",
+      "filePath": ".github/workflows/discord-notify.yml",
+      "summary": "Sends a Discord webhook notification when a new nightly release is published, including version title, release link, and optional role mention.",
+      "tags": [
+        "ci-cd",
+        "notifications",
+        "discord"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/build-failure.yml",
+      "type": "config",
+      "name": "Build Failure Report",
+      "filePath": ".github/ISSUE_TEMPLATE/build-failure.yml",
+      "summary": "Issue template for automated nightly build failure reports, capturing build run ID, failed ABI(s), build date, logs, and summary.",
+      "tags": [
+        "issue-template",
+        "build-failure",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/report-version-broken.yml",
+      "type": "config",
+      "name": "Report Broken Version",
+      "filePath": ".github/ISSUE_TEMPLATE/report-version-broken.yml",
+      "summary": "Issue template for users to report a broken nightly version, with pre-submission checklist, version field, what happened, steps to reproduce, and OS info.",
+      "tags": [
+        "issue-template",
+        "bug-report",
+        "user-feedback"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/config.yml",
+      "type": "config",
+      "name": "Issue Template Config",
+      "filePath": ".github/ISSUE_TEMPLATE/config.yml",
+      "summary": "GitHub issue template configuration that disables blank issues, forcing users to use the provided templates.",
+      "tags": [
+        "issue-template",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:renovate.json",
+      "type": "config",
+      "name": "Renovate Config",
+      "filePath": "renovate.json",
+      "summary": "Renovate dependency bot configuration using the recommended preset for automated dependency updates.",
+      "tags": [
+        "configuration",
+        "dependencies",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": "Environment Variables Example",
+      "filePath": ".env.example",
+      "summary": "Example environment variables for Telegram notification script, including bot token, chat ID, Telegram API credentials, and GitHub repository settings.",
+      "tags": [
+        "configuration",
+        "environment",
+        "secrets"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/check-action-versions.main.kts",
+      "type": "file",
+      "name": "check-action-versions.main.kts",
+      "filePath": "scripts/check-action-versions.main.kts",
+      "summary": "Kotlin script that checks GitHub Action versions used in workflow files for outdated references.",
+      "tags": [
+        "script",
+        "github-actions",
+        "version-check",
+        "kotlin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/generate-changelog.main.kts",
+      "type": "file",
+      "name": "generate-changelog.main.kts",
+      "filePath": "scripts/generate-changelog.main.kts",
+      "summary": "Kotlin script that fetches commits from GitHub API for koiverse/ArchiveTune dev branch and formats a changelog with MVP committer leaderboard.",
+      "tags": [
+        "script",
+        "changelog",
+        "github-api",
+        "kotlin"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:scripts/sync-readme.main.kts",
+      "type": "file",
+      "name": "sync-readme.main.kts",
+      "filePath": "scripts/sync-readme.main.kts",
+      "summary": "Kotlin script that copies temp/README.md template and fetches upstream README/CONTRIBUTING content from koiverse/ArchiveTune repositories.",
+      "tags": [
+        "script",
+        "documentation",
+        "readme",
+        "kotlin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Main project README with badges, build status, installation links, and documentation for the ArchiveTune Nightly CI/CD repository.",
+      "tags": [
+        "documentation",
+        "readme",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:SECURITY.md",
+      "type": "document",
+      "name": "SECURITY.md",
+      "filePath": "SECURITY.md",
+      "summary": "Security policy document with supported versions and vulnerability reporting instructions.",
+      "tags": [
+        "documentation",
+        "security",
+        "policy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:temp/README.md",
+      "type": "document",
+      "name": "temp/README.md",
+      "filePath": "temp/README.md",
+      "summary": "README template with placeholders <!-- README.md --> and <!-- CONTRIBUTING.md --> that get replaced with upstream content during the sync workflow.",
+      "tags": [
+        "documentation",
+        "template",
+        "readme"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "pipeline:.github/workflows/trigger.yml",
+      "target": "pipeline:.github/workflows/check-update.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/check-update.yml",
+      "target": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "target": "pipeline:.github/workflows/update-release-notes.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/update-release-notes.yml",
+      "target": "pipeline:.github/workflows/discord-notify.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "target": "pipeline:.github/workflows/sync-readme.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "target": "pipeline:.github/workflows/discord-notify.yml",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/sync-readme.yml",
+      "target": "file:scripts/sync-readme.main.kts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/update-release-notes.yml",
+      "target": "file:scripts/generate-changelog.main.kts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/update-release-notes.yml",
+      "target": "file:scripts/check-action-versions.main.kts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:temp/README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:temp/README.md",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:renovate.json",
+      "target": "config:.env.example",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.github/ISSUE_TEMPLATE/build-failure.yml",
+      "target": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.github/ISSUE_TEMPLATE/report-version-broken.yml",
+      "target": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "pipeline:.github/workflows/daily-nightly-build.yml",
+      "target": "document:README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "pipeline:.github/workflows/sync-readme.yml",
+      "target": "document:README.md",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:ci-cd-pipelines",
+      "name": "CI/CD Pipelines",
+      "description": "GitHub Actions workflow files that orchestrate the nightly build process: triggering, building, syncing documentation, updating release notes, and sending notifications.",
+      "nodeIds": [
+        "pipeline:.github/workflows/daily-nightly-build.yml",
+        "pipeline:.github/workflows/check-update.yml",
+        "pipeline:.github/workflows/discord-notify.yml",
+        "pipeline:.github/workflows/sync-readme.yml",
+        "pipeline:.github/workflows/trigger.yml",
+        "pipeline:.github/workflows/update-release-notes.yml"
+      ]
+    },
+    {
+      "id": "layer:issue-templates",
+      "name": "Issue Templates",
+      "description": "GitHub issue templates for reporting build failures and broken nightly versions, plus configuration to enforce template usage.",
+      "nodeIds": [
+        "config:.github/ISSUE_TEMPLATE/build-failure.yml",
+        "config:.github/ISSUE_TEMPLATE/config.yml",
+        "config:.github/ISSUE_TEMPLATE/report-version-broken.yml"
+      ]
+    },
+    {
+      "id": "layer:automation-scripts",
+      "name": "Automation Scripts",
+      "description": "Kotlin scripts that perform build-time tasks: syncing README content, generating changelogs, and checking GitHub Action versions.",
+      "nodeIds": [
+        "file:scripts/check-action-versions.main.kts",
+        "file:scripts/generate-changelog.main.kts",
+        "file:scripts/sync-readme.main.kts"
+      ]
+    },
+    {
+      "id": "layer:configuration",
+      "name": "Configuration",
+      "description": "Project configuration files including Renovate dependency bot settings and environment variable examples.",
+      "nodeIds": [
+        "config:renovate.json",
+        "config:.env.example"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "Project documentation including the main README, security policy, and README template used for syncing.",
+      "nodeIds": [
+        "document:README.md",
+        "document:SECURITY.md",
+        "document:temp/README.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "Start with the README to understand the project's purpose as a CI/CD infrastructure repository for nightly builds of the ArchiveTune Android app.",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Build Pipeline Entry Point",
+      "description": "The Trigger Workflow is the cron-based entry point that initiates the nightly build process via an external scheduler, avoiding GitHub Actions scheduling delays.",
+      "nodeIds": [
+        "pipeline:.github/workflows/trigger.yml"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Update Check Logic",
+      "description": "Before building, this workflow checks the upstream ArchiveTune dev branch for new commits in the last 24 hours, only triggering a build if changes exist.",
+      "nodeIds": [
+        "pipeline:.github/workflows/check-update.yml"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Core Nightly Build Pipeline",
+      "description": "The main build workflow checks out ArchiveTune source, patches version names and package IDs for nightly, then builds signed APKs across 6 architecture variants (arm64, armeabi, x86, x86_64, mobile universal, TV universal) with retry logic.",
+      "nodeIds": [
+        "pipeline:.github/workflows/daily-nightly-build.yml"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Changelog Generation Script",
+      "description": "This Kotlin script fetches commits from the upstream GitHub API and formats a changelog with an MVP committer leaderboard, used by the release notes workflow.",
+      "nodeIds": [
+        "file:scripts/generate-changelog.main.kts"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Release Notes and AI Summarization",
+      "description": "After the build completes, this workflow generates detailed release notes, optionally summarizes them using Gemini AI, and edits the GitHub release.",
+      "nodeIds": [
+        "pipeline:.github/workflows/update-release-notes.yml"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Discord Notification",
+      "description": "Sends a notification to Discord via webhook when a new nightly release is published, including version info and download link.",
+      "nodeIds": [
+        "pipeline:.github/workflows/discord-notify.yml"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "README Sync",
+      "description": "This workflow syncs the README from a template, fetches upstream content, and updates version counter GIFs - ensuring documentation stays current.",
+      "nodeIds": [
+        "pipeline:.github/workflows/sync-readme.yml"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "GitHub Action Version Checker",
+      "description": "A Kotlin script that validates all GitHub Action version references across workflow files to detect outdated versions.",
+      "nodeIds": [
+        "file:scripts/check-action-versions.main.kts"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Issue Templates and User Feedback",
+      "description": "Issue templates for automated build failure reports and user-submitted broken version reports, forming the feedback loop for nightly quality.",
+      "nodeIds": [
+        "config:.github/ISSUE_TEMPLATE/build-failure.yml",
+        "config:.github/ISSUE_TEMPLATE/report-version-broken.yml"
+      ]
+    }
+  ],
+  "version": "1.0.0",
+  "project": {
+    "name": "ArchiveTune-Nightly",
+    "languages": [
+      "yaml",
+      "json",
+      "kotlin",
+      "markdown",
+      "javascript"
+    ],
+    "frameworks": [
+      "GitHub Actions"
+    ],
+    "description": "CI/CD infrastructure repository that automates daily nightly builds and releases for the ArchiveTune Android app.",
+    "analyzedAt": "2026-05-24T03:18:16.280Z",
+    "gitCommitHash": "4c30ca446fd7d9d82fb7fa9c3c0cdab1a52c63ae"
+  }
+}
