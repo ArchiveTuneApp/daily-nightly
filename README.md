@@ -76,6 +76,9 @@ FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
 
 This repository contains the nightly build setup for ArchiveTune, an advanced YouTube Music client for Android. Read bellow to read more about this app.
 
+<details>
+<summary>Click to expand <b>🛠️ Development Environment 🛠️</b></summary>
+
 <div align="center">
 
 ## 🛠️ Development Environment 🛠️
@@ -151,3 +154,5 @@ You can set 1 second if you can't wait.
 > [!TIP]
 > - The workflow uses `repository_dispatch` trigger, so the external cron service needs a PAT token with `repo` scope to send the dispatch event.
 > - Alternatively, you can use GitHub's built-in scheduler by adding a `schedule` trigger to the workflow, but the external cron-job.org method gives you more control.
+
+</details>
