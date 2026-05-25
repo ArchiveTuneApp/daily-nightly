@@ -24,14 +24,8 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN || github.token }}
 
-      - name: ♿ Set up Kotlin
-        uses: actions/setup-java@v5
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: 💻 Run sync-readme.kts
-        run: kotlin scripts/sync-readme.main.kts
+      - name: 📋 Copy temp/README.md to README.md
+        run: cp temp/README.md README.md
 
       # Change my repository name in "temp/README.md" can make your document broken, so CREAFULLY
       - name: 👍 Your fork, your documentation
