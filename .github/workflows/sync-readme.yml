@@ -10,7 +10,7 @@ on:
     branches:
       - main
     paths:
-      - temp/README.md  # Only trigger on changes to this file
+      - README.md  # Only trigger on changes to this file
 
 permissions:
   contents: write
@@ -24,10 +24,7 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN || github.token }}
 
-      - name: 📋 Copy temp/README.md to README.md
-        run: cp temp/README.md README.md
-
-      # Change my repository name in "temp/README.md" can make your document broken, so CREAFULLY
+      # Change my repository name in "README.md" can make your document broken, so CREAFULLY
       - name: 👍 Your fork, your documentation
         run: |
           sed -i 's|sang765/ArchiveTune-Nightly|${{ github.repository }}|g' README.md
