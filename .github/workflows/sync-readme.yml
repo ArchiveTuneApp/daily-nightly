@@ -34,6 +34,28 @@ jobs:
         run: |
           sed -i 's|<img src="https://github.com/koiverse/ArchiveTune/blob/main/fastlane/metadata/android/en-US/images/icon.png" width="160" height="160" alt="ArchiveTune Logo" style="border-radius: 22%">|<picture>\n    <source media="(prefers-color-scheme: dark)" srcset="images/icon-white.png">\n    <source media="(prefers-color-scheme: light)" srcset="images/icon-black.png">\n    <img src="images/icon-black.png" width="160" height="160" alt="ArchiveTune Logo" style="border-radius: 22%">\n  </picture>|g' README.md
 
+      - name: 📖 Read current README values
+        id: read-current
+        run: |
+          echo "Reading current GIF counter line from README..."
+          CURRENT_GIF=$(grep '\[!\[Download\](https://rule34.xxx/counter/' README.md | head -1 || echo "")
+          echo "Current GIF line: $CURRENT_GIF"
+          echo "current_gif<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_GIF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "Reading current certificate fingerprints from README..."
+          CURRENT_SHA1=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | head -1 || echo "")
+          CURRENT_SHA256=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | tail -1 || echo "")
+          echo "Current SHA1: $CURRENT_SHA1"
+          echo "Current SHA256: $CURRENT_SHA256"
+          echo "current_sha1<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_SHA1" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "current_sha256<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_SHA256" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: ⌨️ Update GIF counters from latest release
         run: |
           # Fetch latest release version using GitHub API
@@ -64,7 +86,7 @@ jobs:
           echo "Generated GIF URLs: $GIF_URLS"
           
           # Find old GIF counter line and replace with new one
-          OLD_GIF=$(grep '\[!\[Download\](https://rule34.xxx/counter/' README.md | head -1)
+          OLD_GIF="${{ steps.read-current.outputs.current_gif }}"
           if [ -n "$OLD_GIF" ]; then
             sed -i "s|$OLD_GIF|$GIF_URLS|g" README.md
           fi
@@ -115,8 +137,8 @@ jobs:
           echo "SHA-256: $SHA256"
 
           # Find old SHA-1 and SHA-256 fingerprints in README and replace with new ones
-          OLD_SHA1=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | head -1)
-          OLD_SHA256=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | tail -1)
+          OLD_SHA1="${{ steps.read-current.outputs.current_sha1 }}"
+          OLD_SHA256="${{ steps.read-current.outputs.current_sha256 }}"
 
           if [ -n "$OLD_SHA1" ]; then
             sed -i "s|$OLD_SHA1|$SHA1|g" README.md
