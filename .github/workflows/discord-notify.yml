@@ -21,8 +21,8 @@ jobs:
 
       - name: Wait for release to be available
         run: |
-          # Give GitHub API a moment to process the new release
-          sleep 3
+          echo "Waiting 60 seconds for release to propagate..."
+          sleep 60
 
       - name: Get latest release
         id: get_release
