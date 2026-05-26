@@ -157,12 +157,6 @@ jobs:
 
       - name: 🔄 Check for changes and commit
         run: |
-          # Check if there are changes to commit
-          if git diff --quiet README.md; then
-            echo "No changes to README.md - skipping commit"
-            exit 0
-          fi
-
           # Ensure git user is configured (required for commits)
           git config --global user.name '${{ github.actor }}' || true
           git config --global user.email '${{ github.actor }}@users.noreply.github.com' || true
