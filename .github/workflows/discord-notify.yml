@@ -2,7 +2,7 @@ name: Discord Notification
 
 on:
   workflow_run:
-    workflows: ["Daily Nightly Build"]
+    workflows: ["Daily Nightly Build", "Daily Nightly Build -*"]
     types:
       - completed
   workflow_dispatch: 
