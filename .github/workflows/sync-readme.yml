@@ -90,7 +90,10 @@ jobs:
           echo "🔄 Replacing old GIF: $OLD_GIF"
           echo "🆕 With new GIF: $GIF_URLS"
           if [ -n "$OLD_GIF" ]; then
-            sed -i "s|$OLD_GIF|$GIF_URLS|g" README.md
+            # Use bash native literal replacement (avoids sed regex issues with [ ] brackets)
+            content=$(<README.md)
+            content="${content//"$OLD_GIF"/$GIF_URLS}"
+            printf '%s\n' "$content" > README.md
           fi
           
           # Also update the URL in the link
