@@ -74,8 +74,9 @@ jobs:
           Requirements:
           - Total message must be under 2000 characters
           - First line must be: \"# ArchiveTune Nightly $VERSION_TITLE has been released\"
-          - Discord Markdown only: bold, italic, underline, strikethrough, headings (###), bullet lists, numbered lists, inline code, links, line breaks
-          - Do NOT use: horizontal rules (---), checkboxes (- [ ]), HTML tags, or tables
+          - Use ONLY Discord-compatible Markdown (https://support.discord.com/hc/en-us/articles/210298617)
+          - Supported: **bold**, *italic*, __underline__, ~~strikethrough~~, ### headings, -/* bullet lists, 1. numbered lists, `inline code`, ```code blocks```, > blockquotes, [masked links](url), ||spoilers||, -# subtext
+          - Do NOT use: --- horizontal rules, - [ ] checkboxes, HTML tags, tables, details/summary, footnotes, or any other non-Discord Markdown
           - Include a link to the release: $RELEASE_URL
           - Include this role mention somewhere in the message: $MENTION_ROLE
           - Summarize the key changes concisely from the release notes below
