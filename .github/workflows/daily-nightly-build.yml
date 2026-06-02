@@ -45,6 +45,7 @@ jobs:
         with:
           repository: koiverse/ArchiveTune
           ref: dev
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: 📃 Generate changelog
         id: changelog
@@ -200,6 +201,14 @@ jobs:
           )"
           if [ -n "${FOUND_METADATA:-}" ]; then
             echo "release_dir=$(dirname "$FOUND_METADATA")" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Generic fallback: find any unsigned APK and use its directory
+          UNSIGNED_APK=$(find app/build/outputs/apk -maxdepth 8 -type f -name "*.apk" ! -name "*signed*" 2>/dev/null | head -n 1 || true)
+          if [ -n "${UNSIGNED_APK:-}" ] && [ -f "$UNSIGNED_APK" ]; then
+            RELEASE_DIR=$(dirname "$UNSIGNED_APK")
+            echo "release_dir=$RELEASE_DIR" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
