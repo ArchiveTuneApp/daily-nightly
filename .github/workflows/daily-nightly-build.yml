@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   build:
+    name: Build Release APKs (${{ matrix.device }}-${{ matrix.abi }})
+    if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
     runs-on: ubuntu-latest
     outputs:
       new_version: ${{ env.NEW_VERSION }}
@@ -47,7 +49,7 @@ jobs:
           ref: dev
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
-      - name: 📃 Generate changelog
+      - name: Changelog
         id: changelog
         run: |
           SINCE=$(date -u -d 'yesterday 00:00' +'%Y-%m-%dT%H:%M:%SZ')
@@ -58,29 +60,29 @@ jobs:
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: 🗓️ Get Date
+      - name: Date
         id: date
         run: echo "date=$(date +'%Y/%m/%d')" >> $GITHUB_OUTPUT
 
-      - name: ⏳ Get Time
+      - name: Time
         id: time
         run: echo "time=$(date +'%I:%M:%S %p')" >> $GITHUB_OUTPUT
 
-      - name: 🤖 Set up JDK 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v5.2.0
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: 🐘 Set Up Gradle
+      - name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-cleanup: on-success
 
-      - name: 💉 Grant execute permission for gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: ❓️ Resolve variant names
+      - name: Resolve variant names
         id: variant
         shell: bash
         run: |
@@ -97,55 +99,53 @@ jobs:
           echo "artifact_name=app-${DEVICE}-${ABI}-nightly" >> "$GITHUB_OUTPUT"
           echo "apk_name=app-${DEVICE}-${ABI}-nightly.apk" >> "$GITHUB_OUTPUT"
 
-      - name: ⌨️ Update version name and code for nightly build
+      - name: Resolve build hash
+        id: build_hash
+        shell: bash
         run: |
-          # original values
+          set -euo pipefail
+          echo "value=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Update version name and code for nightly build
+        run: |
           ORIGINAL_VERSION=$(grep 'versionName = ' app/build.gradle.kts | sed 's/.*versionName = "\(.*\)"/\1/')
           ORIGINAL_VERSION_CODE=$(grep 'versionCode = ' app/build.gradle.kts | head -n1 | sed 's/.*versionCode = \(.*\)/\1/' | tr -d '[:space:]')
-
-          # new versionName (prefix N + YYYYMMDD)
           NEW_VERSION="N$(date +%Y%m%d)"
-
-          # prefer CI build number; fallback to date if not available
           NEW_VERSION_CODE="${GITHUB_RUN_NUMBER}"
           if [ -z "$NEW_VERSION_CODE" ]; then
             NEW_VERSION_CODE=$(date +%Y%m%d)
           fi
-
-          # apply replacements
           sed -i "s/versionName = \"$ORIGINAL_VERSION\"/versionName = \"$NEW_VERSION\"/" app/build.gradle.kts
           sed -i "s/versionCode = $ORIGINAL_VERSION_CODE/versionCode = $NEW_VERSION_CODE/" app/build.gradle.kts
-
           echo "Changed version from $ORIGINAL_VERSION ($ORIGINAL_VERSION_CODE) to $NEW_VERSION ($NEW_VERSION_CODE)"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
 
-      - name: ⌨️ Update app name and package for nightly
+      - name: Update app name and package for nightly
         run: |
           sed -i 's/applicationId = "moe.koiverse.archivetune"/applicationId = "moe.koiverse.archivetune.nightly"/' app/build.gradle.kts
           sed -i 's/ArchiveTune Debug/ArchiveTune Nightly Debug/' app/src/debug/res/values/app_name.xml
           sed -i 's/ArchiveTune/ArchiveTune Nightly/' app/src/main/res/values/app_name.xml
 
-      - name: ⌨️ Set default update channel to nightly
+      - name: Set default update channel to nightly
         run: sed -i 's/defaultValue = UpdateChannel.STABLE/defaultValue = UpdateChannel.NIGHTLY/' app/src/main/kotlin/moe/koiverse/archivetune/ui/screens/settings/UpdateScreen.kt
 
-      - name: ⌨️ Update about screen to show ABI_NIGHTLY label
+      - name: Update about screen to show ABI_NIGHTLY label
         run: |
           sed -i 's/text = BuildConfig.ARCHITECTURE.uppercase(),/text = "${BuildConfig.ARCHITECTURE.uppercase()}_NIGHTLY",/' app/src/main/kotlin/moe/koiverse/archivetune/ui/screens/settings/AboutScreen.kt
 
-      - name: ⌨️ Update update check URLs for fork
+      - name: Update update check URLs for fork
         run: |
           sed -i 's|https://github.com/koiverse/ArchiveTune/releases/latest/download/|https://github.com/${{ github.repository }}/releases/latest/download/|g' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
-          # sed -i 's/ArchiveTune.apk/ArchiveTune-Nightly.apk/' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
           sed -i 's/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-release.apk/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-nightly.apk/' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
           sed -i 's|https://api.github.com/repos/koiverse/ArchiveTune/releases?per_page=$perPage|https://api.github.com/repos/${{ github.repository }}/releases?per_page=$perPage|g' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
 
-      - name: 🔨 Build Release APK
+      - name: Build Release APK
         shell: bash
         run: |
           GRADLE_TASK="${{ steps.variant.outputs.gradle_task }}"
           ABI="${{ matrix.abi }}"
-          
+
           if [ "$ABI" = "armeabi" ] || [ "$ABI" = "x86" ]; then
             ./gradlew "$GRADLE_TASK" 2>&1 | python3 -c "import re,sys;p=re.compile(r'^(WARNING: )?\[CXX5202\] This app only has 32-bit \[(armeabi-v7a|x86)\] native libraries\. Beginning August 1, 2019 Google Play store requires that all apps that include native libraries must provide 64-bit versions\. For more information, visit https://g\.co/64-bit-requirement\$');[sys.stdout.write(l) for l in sys.stdin if not p.match(l.rstrip())]"
           else
@@ -158,8 +158,9 @@ jobs:
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
           TOGETHER_BEARER_TOKEN: ${{ secrets.TOGETHER_BEARER_TOKEN }}
           CANVAS_BEARER_TOKEN: ${{ secrets.CANVAS_BEARER_TOKEN }}
+          NIGHTLY_BUILD_HASH: ${{ steps.build_hash.outputs.value }}
 
-      - name: ❓️ Resolve release output directory
+      - name: Resolve release output directory
         id: release_dir
         shell: bash
         run: |
@@ -204,7 +205,6 @@ jobs:
             exit 0
           fi
 
-          # Generic fallback: find any unsigned APK and use its directory
           UNSIGNED_APK=$(find app/build/outputs/apk -maxdepth 8 -type f -name "*.apk" ! -name "*signed*" 2>/dev/null | head -n 1 || true)
           if [ -n "${UNSIGNED_APK:-}" ] && [ -f "$UNSIGNED_APK" ]; then
             RELEASE_DIR=$(dirname "$UNSIGNED_APK")
@@ -216,7 +216,7 @@ jobs:
           find app/build/outputs/apk -maxdepth 8 -type d -print || true
           exit 1
 
-      - name: 🔏 Sign APK
+      - name: Sign APK
         id: sign_app
         uses: ilharp/sign-android-release@v2.0.0
         with:
@@ -227,7 +227,7 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
           buildToolsVersion: 35.0.0
 
-      - name: 📲 Move signed APK
+      - name: Move signed APK
         shell: bash
         run: |
           set -euo pipefail
@@ -236,7 +236,7 @@ jobs:
           SIGNED_APK=$(find "$RELEASE_DIR" -type f \( -name "*-signed.apk" -o -name "*-unsigned-signed.apk" \) | head -n 1)
           mv "$SIGNED_APK" "$RELEASE_DIR/out/${{ steps.variant.outputs.apk_name }}"
 
-      - name: 📤 Upload Signed APK
+      - name: Upload Signed APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.variant.outputs.artifact_name }}
@@ -257,26 +257,26 @@ jobs:
           token: ${{ secrets.PAT_TOKEN || github.token }}
           persist-credentials: true
 
-      - name: ☕ Setup Java
+      - name: Setup Java
         uses: actions/setup-java@v5.2.0
         with:
           distribution: temurin
           java-version: '21'
 
-      - name: 🐘 Setup Kotlin
+      - name: Setup Kotlin
         uses: fwilhe2/setup-kotlin@v1.8
 
-      - name: 🐘 Generate changelog
+      - name: Generate changelog
         run: kotlin .github/scripts/generate-changelog.main.kts
         env:
           REPO_PATH: "koiverse/ArchiveTune"
           BRANCH: "dev"
 
-      - name: 🗓️ Get Date
+      - name: Date
         id: date
         run: echo "date=$(date -u +'%Y/%m/%d - %H:%M:%S')" >> $GITHUB_OUTPUT
 
-      - name: 📃 Read changelog
+      - name: Read changelog
         id: changelog
         run: |
           CHANGELOG=$(cat changelog.md)
@@ -286,26 +286,26 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-      - name: 🤖 Summarize release
+      - name: AI Summary
         id: ai_summary
         if: env.GEMINI_API_KEY != ''
         run: |
           ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
 
-          PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note. 
-          Use categories like ✨ Features, 🐞 Bug Fixes, 🚀 Improvements, and 🧹 Refactor. 
+          PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note.
+          Use categories like ✨ Features, 🐞 Bug Fixes, 🚀 Improvements, and 🧹 Refactor.
           Keep it concise and highlight the most important changes.
-          
-          Additionally, look at the '## 🏆 MVP Committer' section in the provided text. 
+
+          Additionally, look at the '## 🏆 MVP Committer' section in the provided text.
           Pick the most impactful commit from that specific user and write a short 'MVP Highlight' (1-2 sentences) explaining why it was their best contribution.
-          
+
           Format the output as:
           ## What changed on this release?
           [Your categorized summary here]
-          
+
           ## 🌟 MVP Highlight
           [Your highlight for the MVP committer here]
-          
+
           Commits:
           $ESCAPED_CHANGELOG"
 
@@ -321,13 +321,13 @@ jobs:
                   \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
                 }]
               }")
-            
+
             ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
-            
+
             if [ -z "$ERROR" ]; then
               break
             fi
-            
+
             if echo "$RESPONSE" | jq -e '.error.code == 429' > /dev/null; then
               echo "Rate limit exceeded (429). Retrying in ${WAIT_TIME}s... (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
               sleep $WAIT_TIME
@@ -356,12 +356,12 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: 📥 Download APK in Artifacts
+      - name: Download APK Artifacts
         uses: actions/download-artifact@v8
         with:
           path: downloaded_artifacts/
 
-      - name: 📋 Build release body
+      - name: Build release body
         id: release_body
         run: |
           cat > release_body.md << 'RELEASE_BODY_EOF'
@@ -372,7 +372,7 @@ jobs:
           ${{ steps.changelog.outputs.changelog }}
           RELEASE_BODY_EOF
 
-      - name: 📦 Create release
+      - name: Create release
         uses: softprops/action-gh-release@v3.0.0
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -382,7 +382,7 @@ jobs:
           files: |
             downloaded_artifacts/**/*.apk
 
-      - name: ❌ Notify on failure
+      - name: Notify on failure
         if: failure()
         run: |
           echo "Build failed on $(date)"
