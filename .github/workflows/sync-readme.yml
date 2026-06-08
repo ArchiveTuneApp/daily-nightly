@@ -22,7 +22,7 @@ jobs:
       - name: 🔎 Checkout repository
         uses: actions/checkout@v6.0.3
         with:
-          token: ${{ secrets.PAT_TOKEN || github.token }}
+          token: ${{ github.token || secrets.PAT_TOKEN }}
 
       # Change my repository name in "README.md" can make your document broken, so CREAFULLY
       - name: 👍 Your fork, your documentation
@@ -54,7 +54,7 @@ jobs:
       - name: ⌨️ Update GIF counters from latest release
         run: |
           # Fetch latest release version using GitHub API
-          RELEASE_JSON=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN || github.token }}" \
+          RELEASE_JSON=$(curl -s -H "Authorization: token ${{ github.token || secrets.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/releases/latest")
           
@@ -96,7 +96,7 @@ jobs:
 
       - name: 🔐 Update certificate fingerprints from signed APK
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token || secrets.PAT_TOKEN }}
         run: |
           # Default fallback fingerprints (used until first release exists)
           SHA1="2C:19:C7:E8:07:61:2B:8E:94:51:1B:FD:72:67:07:64:5D:C2:58:AE"

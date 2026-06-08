@@ -47,7 +47,7 @@ jobs:
         with:
           repository: ArchiveTuneApp/ArchiveTune
           ref: dev
-          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN || secrets.PAT_TOKEN }}
 
       - name: Changelog
         id: changelog
@@ -248,13 +248,13 @@ jobs:
     permissions:
       contents: write
     env:
-      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+      GITHUB_TOKEN: ${{ github.token || secrets.PAT_TOKEN }}
     steps:
       - uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           ref: main
-          token: ${{ secrets.PAT_TOKEN || github.token }}
+          token: ${{ github.token || secrets.PAT_TOKEN }}
           persist-credentials: true
 
       - name: Setup Java
@@ -375,7 +375,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v3.0.0
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ github.token || secrets.PAT_TOKEN }}
           tag_name: ${{ needs.build.outputs.new_version }}
           name: ${{ needs.build.outputs.new_version }}
           body_path: release_body.md
