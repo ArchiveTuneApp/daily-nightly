@@ -26,7 +26,7 @@ jobs:
           
           echo "Checking commits from $SINCE to $UNTIL"
           
-          RESPONSE=$(curl -s "https://api.github.com/repos/koiverse/ArchiveTune/commits?sha=dev&since=$SINCE&until=$UNTIL")
+          RESPONSE=$(curl -s "https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/commits?sha=dev&since=$SINCE&until=$UNTIL")
           COUNT=$(echo "$RESPONSE" | jq '. | length')
           
           echo "Found $COUNT commits."

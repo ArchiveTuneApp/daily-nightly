@@ -96,7 +96,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             val issueRegex = "#(\\d+)".toRegex()
             message = issueRegex.replace(message) { matchResult ->
                 val number = matchResult.groupValues[1]
-                "[#$number](https://github.com/koiverse/ArchiveTune/issues/$number)"
+                "[#$number](https://github.com/ArchiveTuneApp/ArchiveTune/issues/$number)"
             }
 
             // Get author information (preferably GitHub login, fallback to Git username)
@@ -128,7 +128,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             }
 
             // Create log line
-            changelogEntries.append("- `$date`: [`${sha.take(7)}`](https://github.com/koiverse/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
+            changelogEntries.append("- `$date`: [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
             continue
@@ -183,7 +183,7 @@ fun getCommitAuthorName(commitDetails: JsonObject): String {
 
 fun main() {
     try {
-        val repoPath = System.getenv("REPO_PATH") ?: "koiverse/ArchiveTune"
+        val repoPath = System.getenv("REPO_PATH") ?: "ArchiveTuneApp/ArchiveTune"
         val branch = System.getenv("BRANCH") ?: "dev"
         
         if (!repoPath.contains("/")) {

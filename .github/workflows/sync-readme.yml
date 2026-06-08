@@ -92,7 +92,7 @@ jobs:
           fi
           
           # Also update the URL in the link
-          sed -i "s|github.com/sang765/ArchiveTune-Nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
+          sed -i "s|github.com/ArchiveTuneApp/daily-nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
 
       - name: 🔐 Update certificate fingerprints from signed APK
         env:

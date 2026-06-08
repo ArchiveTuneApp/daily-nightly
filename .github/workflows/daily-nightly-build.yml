@@ -128,17 +128,17 @@ jobs:
           sed -i 's/ArchiveTune/ArchiveTune Nightly/' app/src/main/res/values/app_name.xml
 
       - name: Set default update channel to nightly
-        run: sed -i 's/defaultValue = UpdateChannel.STABLE/defaultValue = UpdateChannel.NIGHTLY/' app/src/main/kotlin/moe/koiverse/archivetune/ui/screens/settings/UpdateScreen.kt
+        run: sed -i 's/defaultValue = UpdateChannel.STABLE/defaultValue = UpdateChannel.NIGHTLY/' app/src/main/kotlin/moe/ArchiveTuneApp/archivetune/ui/screens/settings/UpdateScreen.kt
 
       - name: Update about screen to show ABI_NIGHTLY label
         run: |
-          sed -i 's/text = BuildConfig.ARCHITECTURE.uppercase(),/text = "${BuildConfig.ARCHITECTURE.uppercase()}_NIGHTLY",/' app/src/main/kotlin/moe/koiverse/archivetune/ui/screens/settings/AboutScreen.kt
+          sed -i 's/text = BuildConfig.ARCHITECTURE.uppercase(),/text = "${BuildConfig.ARCHITECTURE.uppercase()}_NIGHTLY",/' app/src/main/kotlin/moe/ArchiveTuneApp/archivetune/ui/screens/settings/AboutScreen.kt
 
       - name: Update update check URLs for fork
         run: |
-          sed -i 's|https://github.com/ArchiveTuneApp/ArchiveTune/releases/latest/download/|https://github.com/${{ github.repository }}/releases/latest/download/|g' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
-          sed -i 's/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-release.apk/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-nightly.apk/' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
-          sed -i 's|https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/releases?per_page=$perPage|https://api.github.com/repos/${{ github.repository }}/releases?per_page=$perPage|g' app/src/main/kotlin/moe/koiverse/archivetune/utils/Updater.kt
+          sed -i 's|https://github.com/ArchiveTuneApp/ArchiveTune/releases/latest/download/|https://github.com/${{ github.repository }}/releases/latest/download/|g' app/src/main/kotlin/moe/ArchiveTuneApp/archivetune/utils/Updater.kt
+          sed -i 's/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-release.apk/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-nightly.apk/' app/src/main/kotlin/moe/ArchiveTuneApp/archivetune/utils/Updater.kt
+          sed -i 's|https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/releases?per_page=$perPage|https://api.github.com/repos/${{ github.repository }}/releases?per_page=$perPage|g' app/src/main/kotlin/moe/ArchiveTuneApp/archivetune/utils/Updater.kt
 
       - name: Build Release APK
         shell: bash

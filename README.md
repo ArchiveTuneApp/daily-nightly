@@ -73,8 +73,8 @@ FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
 </div>
 
 - Latest dev build in **ArchiveTune** repository:  
-  [![Latest Dev Branch Workflow Build](https://img.shields.io/github/actions/workflow/status/koiverse/ArchiveTune/build.yml?branch=dev&style=for-the-badge&logo=githubactions&logoColor=ffffff&label=Last%20DEV%20Build&labelColor=1e1e2e&color=6366f1)](https://github.com/koiverse/ArchiveTune/actions/workflows/build.yml?query=branch%3Adev)
-- [ArchiveTune Repository](https://github.com/koiverse/ArchiveTune)
+  [![Latest Dev Branch Workflow Build](https://img.shields.io/github/actions/workflow/status/ArchiveTuneApp/ArchiveTune/build.yml?branch=dev&style=for-the-badge&logo=githubactions&logoColor=ffffff&label=Last%20DEV%20Build&labelColor=1e1e2e&color=6366f1)](https://github.com/ArchiveTuneApp/ArchiveTune/actions/workflows/build.yml?query=branch%3Adev)
+- [ArchiveTune Repository](https://github.com/ArchiveTuneApp/ArchiveTune)
 
 This repository contains the nightly build setup for ArchiveTune, an advanced YouTube Music client for Android. Read bellow to read more about this app.
 
