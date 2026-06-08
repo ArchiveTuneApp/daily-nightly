@@ -136,9 +136,8 @@ jobs:
 
       - name: Update update check URLs for fork
         run: |
-          sed -i 's|https://github.com/ArchiveTuneApp/ArchiveTune/releases/latest/download/|https://github.com/${{ github.repository }}/releases/latest/download/|g' app/src/main/kotlin/moe/rukamori/archivetune/utils/Updater.kt
-          sed -i 's/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-release.apk/app-${BuildConfig.DEVICE}-${BuildConfig.ARCHITECTURE}-nightly.apk/' app/src/main/kotlin/moe/rukamori/archivetune/utils/Updater.kt
-          sed -i 's|https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/releases?per_page=$perPage|https://api.github.com/repos/${{ github.repository }}/releases?per_page=$perPage|g' app/src/main/kotlin/moe/rukamori/archivetune/utils/Updater.kt
+          sed -i 's|https://github.com/ArchiveTuneApp/ArchiveTune/releases/latest|https://github.com/${{ github.repository }}/releases/latest|g' app/src/main/kotlin/moe/rukamori/archivetune/utils/Updater.kt
+          sed -i 's|https://api.github.com/repos/koiverse/ArchiveTune/releases?per_page=$perPage|https://api.github.com/repos/${{ github.repository }}/releases?per_page=$perPage|g' app/src/main/kotlin/moe/rukamori/archivetune/utils/Updater.kt
 
       - name: Build Release APK
         shell: bash
