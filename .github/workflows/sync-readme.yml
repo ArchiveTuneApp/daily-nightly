@@ -2,7 +2,7 @@ name: Sync README
 
 on:
   workflow_run:
-    workflows: ["Daily Nightly Build", "trigger-nightly"]
+    workflows: ["Daily Nightly Build"]
     types:
       - completed
   workflow_dispatch:  # Allow manual trigger
