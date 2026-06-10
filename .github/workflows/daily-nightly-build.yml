@@ -128,7 +128,7 @@ jobs:
           sed -i 's/ArchiveTune/ArchiveTune Nightly/' app/src/main/res/values/app_name.xml
 
       - name: Set default update channel to nightly
-        run: sed -i 's/defaultValue = UpdateChannel.STABLE/defaultValue = UpdateChannel.DAILY/' app/src/main/kotlin/moe/rukamori/archivetune/ui/screens/settings/UpdateScreen.kt
+        run: sed -i 's/defaultValue = UpdateChannel.STABLE/defaultValue = UpdateChannel.DAILY_NIGHTLY/' app/src/main/kotlin/moe/rukamori/archivetune/ui/screens/settings/UpdateScreen.kt
 
       - name: Update about screen to show ABI_NIGHTLY label
         run: |
