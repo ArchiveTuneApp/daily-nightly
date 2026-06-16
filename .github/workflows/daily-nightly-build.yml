@@ -48,6 +48,7 @@ jobs:
           repository: ArchiveTuneApp/ArchiveTune
           ref: dev
           token: ${{ secrets.GITHUB_TOKEN || secrets.PAT_TOKEN }}
+          submodules: true
 
       - name: Get last release info
         id: last_release
