@@ -529,14 +529,151 @@ jobs:
             exit 1
           fi
 
-      - name: Trigger Sync README workflow
+
+
+  sync-readme:
+    needs: [create-release]
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 🔎 Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          token: ${{ github.token }}
+
+      - name: 👍 Your fork, your documentation
         run: |
-          curl -L -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN || github.token }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/sync-readme.yml/dispatches \
-            -d '{"ref":"main"}'
+          sed -i 's|ArchiveTuneApp/daily-nightly|${{ github.repository }}|g' README.md
+
+      - name: 📖 Read current README values
+        id: read-current
+        run: |
+          echo "Reading current GIF counter line from README..."
+          CURRENT_GIF=$(grep '\[!\[Download\](https://rule34.xxx/counter/' README.md | head -1 || echo "")
+          echo "Current GIF line: $CURRENT_GIF"
+          echo "current_gif<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_GIF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "Reading current certificate fingerprints from README..."
+          CURRENT_SHA1=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | head -1 || echo "")
+          CURRENT_SHA256=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | tail -1 || echo "")
+          echo "Current SHA1: $CURRENT_SHA1"
+          echo "Current SHA256: $CURRENT_SHA256"
+          echo "current_sha1<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_SHA1" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "current_sha256<<EOF" >> $GITHUB_OUTPUT
+          echo "$CURRENT_SHA256" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: ⌨️ Update GIF counters from latest release
+        run: |
+          RELEASE_JSON=$(curl -s -H "Authorization: token ${{ github.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest")
+
+          VERSION=$(echo "$RELEASE_JSON" | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+          DATE_DIGITS=$(echo "$VERSION" | sed 's/^N//')
+
+          echo "Latest version: $VERSION"
+          echo "Date digits: $DATE_DIGITS"
+
+          GIF_URLS=""
+          for i in $(seq 0 7); do
+            DIGIT=${DATE_DIGITS:$i:1}
+            if [ $i -lt 7 ]; then
+              GIF_URLS="$GIF_URLS[![Download](https://rule34.xxx/counter/$DIGIT.gif)](https://github.com/${{ github.repository }}/releases/latest) "
+            else
+              GIF_URLS="$GIF_URLS[![Download](https://rule34.xxx/counter/$DIGIT.gif)](https://github.com/${{ github.repository }}/releases/latest)"
+            fi
+          done
+
+          echo "Generated GIF URLs: $GIF_URLS"
+
+          OLD_GIF="${{ steps.read-current.outputs.current_gif }}"
+          echo "🔄 Replacing old GIF: $OLD_GIF"
+          echo "🆕 With new GIF: $GIF_URLS"
+          if [ -n "$OLD_GIF" ]; then
+            content=$(<README.md)
+            content="${content//"$OLD_GIF"/$GIF_URLS}"
+            printf '%s\n' "$content" > README.md
+          fi
+
+          sed -i "s|github.com/ArchiveTuneApp/daily-nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
+
+      - name: 🔐 Update certificate fingerprints from signed APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA1="2C:19:C7:E8:07:61:2B:8E:94:51:1B:FD:72:67:07:64:5D:C2:58:AE"
+          SHA256="67:E1:51:00:BB:80:93:01:78:3E:DC:B6:34:8F:A3:BB:F8:30:34:D9:1E:62:86:8A:91:05:3D:BD:70:DB:3F:18"
+
+          API_URL="https://api.github.com/repos/${{ github.repository }}/releases/latest"
+          RELEASE_JSON=$(curl -sf -H "Authorization: token $GH_TOKEN" "$API_URL") || RELEASE_JSON=""
+
+          if [ -n "$RELEASE_JSON" ]; then
+            DL_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app-mobile-universal-nightly.apk") | .url' 2>/dev/null || true)
+
+            if [ -n "$DL_URL" ]; then
+              echo "Downloading universal APK from release..."
+              curl -sfL -H "Authorization: token $GH_TOKEN" \
+                -H "Accept: application/octet-stream" \
+                "$DL_URL" -o /tmp/app.apk && {
+
+                CERT_INFO=$(keytool -printcert -jarfile /tmp/app.apk 2>/dev/null)
+                EXTRACTED_SHA1=$(echo "$CERT_INFO" | grep -i "SHA1:" | sed 's/.*SHA1: //' | xargs || true)
+                EXTRACTED_SHA256=$(echo "$CERT_INFO" | grep -i "SHA256:" | sed 's/.*SHA256: //' | xargs || true)
+
+                if [ -n "$EXTRACTED_SHA1" ] && [ -n "$EXTRACTED_SHA256" ]; then
+                  SHA1="$EXTRACTED_SHA1"
+                  SHA256="$EXTRACTED_SHA256"
+                  echo "✅ Extracted fingerprints from release APK"
+                fi
+              } || echo "⚠️ APK download failed, using fallback"
+            else
+              echo "ℹ️ Universal APK not found in latest release, using fallback"
+            fi
+          else
+            echo "ℹ️ No releases found yet, using fallback fingerprints"
+          fi
+
+          echo "SHA-1:   $SHA1"
+          echo "SHA-256: $SHA256"
+
+          OLD_SHA1="${{ steps.read-current.outputs.current_sha1 }}"
+          OLD_SHA256="${{ steps.read-current.outputs.current_sha256 }}"
+          echo "🔄 Replacing old SHA1: $OLD_SHA1"
+          echo "🆕 With new SHA1: $SHA1"
+          echo "🔄 Replacing old SHA256: $OLD_SHA256"
+          echo "🆕 With new SHA256: $SHA256"
+
+          if [ -n "$OLD_SHA1" ]; then
+            sed -i "s|$OLD_SHA1|$SHA1|g" README.md
+          fi
+          if [ -n "$OLD_SHA256" ]; then
+            sed -i "s|$OLD_SHA256|$SHA256|g" README.md
+          fi
+
+          echo "✅ Updated certificate fingerprints in README.md"
+
+      - name: 🔄 Commit and push
+        run: |
+          git config --global user.name 'github-actions[bot]' || true
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com' || true
+
+          git add README.md
+
+          TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          git commit -m "ci(docs): Sync README.md from workflow run ${TIMESTAMP}" || echo "Nothing new to commit"
+
+          git fetch origin main
+          git rebase origin/main
+          git push origin main --force-with-lease
+
+          echo "✅ README.md successfully synced and pushed to main branch"
 
       - name: Notify on failure
         if: failure()
