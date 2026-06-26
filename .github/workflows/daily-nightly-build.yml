@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Release APKs (${{ matrix.device }}-${{ matrix.abi }})
+    name: Build Release APKs (${{ matrix.distribution }}-${{ matrix.device }}-${{ matrix.abi }})
     if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
     runs-on: ubuntu-latest
     outputs:
@@ -22,6 +22,7 @@ jobs:
       since_sha: ${{ steps.last_release.outputs.SINCE_SHA }}
     strategy:
       matrix:
+        distribution: [gms, foss]
         include:
           - device: mobile
             deviceName: Mobile
@@ -92,15 +93,19 @@ jobs:
           set -euo pipefail
           DEVICE="${{ matrix.device }}"
           ABI="${{ matrix.abi }}"
+          DISTRIBUTION="${{ matrix.distribution }}"
           DEVICE_CAP="${{ matrix.deviceName }}"
           ABI_CAP="$(tr '[:lower:]' '[:upper:]' <<< "${ABI:0:1}")${ABI:1}"
+          DIST_CAP="$(tr '[:lower:]' '[:upper:]' <<< "${DISTRIBUTION:0:1}")${DISTRIBUTION:1}"
           echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
           echo "abi=$ABI" >> "$GITHUB_OUTPUT"
+          echo "distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
           echo "device_cap=$DEVICE_CAP" >> "$GITHUB_OUTPUT"
           echo "abi_cap=$ABI_CAP" >> "$GITHUB_OUTPUT"
-          echo "gradle_task=assembleGms${DEVICE_CAP}${ABI_CAP}Release" >> "$GITHUB_OUTPUT"
-          echo "artifact_name=app-${DEVICE}-${ABI}-nightly" >> "$GITHUB_OUTPUT"
-          echo "apk_name=app-${DEVICE}-${ABI}-nightly.apk" >> "$GITHUB_OUTPUT"
+          echo "distribution_cap=$DIST_CAP" >> "$GITHUB_OUTPUT"
+          echo "gradle_task=assemble${DIST_CAP}${DEVICE_CAP}${ABI_CAP}Release" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=app-${DISTRIBUTION}-${DEVICE}-${ABI}-nightly" >> "$GITHUB_OUTPUT"
+          echo "apk_name=app-${DISTRIBUTION}-${DEVICE}-${ABI}-nightly.apk" >> "$GITHUB_OUTPUT"
 
       - name: Resolve build hash
         id: build_hash
@@ -165,14 +170,15 @@ jobs:
           set -euo pipefail
           DEVICE="${{ steps.variant.outputs.device }}"
           ABI="${{ steps.variant.outputs.abi }}"
+          DISTRIBUTION="${{ steps.variant.outputs.distribution }}"
           DEVICE_CAP="${{ steps.variant.outputs.device_cap }}"
           ABI_CAP="${{ steps.variant.outputs.abi_cap }}"
           CANDIDATES=(
-            "app/build/outputs/apk/gms${DEVICE_CAP}${ABI_CAP}/release"
-            "app/build/outputs/apk/gms${DEVICE}${ABI_CAP}/release"
-            "app/build/outputs/apk/gms/${DEVICE}/${ABI}/release"
-            "app/build/outputs/apk/gms/${DEVICE}${ABI_CAP}/release"
-            "app/build/outputs/apk/gms/${DEVICE_CAP}${ABI_CAP}/release"
+            "app/build/outputs/apk/${DISTRIBUTION}${DEVICE_CAP}${ABI_CAP}/release"
+            "app/build/outputs/apk/${DISTRIBUTION}${DEVICE}${ABI_CAP}/release"
+            "app/build/outputs/apk/${DISTRIBUTION}/${DEVICE}/${ABI}/release"
+            "app/build/outputs/apk/${DISTRIBUTION}/${DEVICE}${ABI_CAP}/release"
+            "app/build/outputs/apk/${DISTRIBUTION}/${DEVICE_CAP}${ABI_CAP}/release"
             "app/build/outputs/apk/${DEVICE}/${ABI}/release"
             "app/build/outputs/apk/${DEVICE}${ABI_CAP}/release"
             "app/build/outputs/apk/${DEVICE_CAP}${ABI_CAP}/release"
@@ -188,9 +194,9 @@ jobs:
           FOUND_METADATA="$(
             find app/build/outputs/apk -type f -name "output-metadata.json" \
               \( \
-                -path "*/${DEVICE}/${ABI}/release/output-metadata.json" -o \
-                -path "*/${DEVICE}${ABI_CAP}/release/output-metadata.json" -o \
-                -path "*/${DEVICE_CAP}${ABI_CAP}/release/output-metadata.json" -o \
+                -path "*/${DISTRIBUTION}/${DEVICE}/${ABI}/release/output-metadata.json" -o \
+                -path "*/${DISTRIBUTION}/${DEVICE}${ABI_CAP}/release/output-metadata.json" -o \
+                -path "*/${DISTRIBUTION}/${DEVICE_CAP}${ABI_CAP}/release/output-metadata.json" -o \
                 -path "*/${ABI}/${DEVICE}/release/output-metadata.json" -o \
                 -path "*/${DEVICE}/${ABI}/*/release/output-metadata.json" -o \
                 -path "*/${DEVICE}${ABI_CAP}/*/release/output-metadata.json" -o \
@@ -615,7 +621,7 @@ jobs:
           RELEASE_JSON=$(curl -sf -H "Authorization: token $GH_TOKEN" "$API_URL") || RELEASE_JSON=""
 
           if [ -n "$RELEASE_JSON" ]; then
-            DL_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app-mobile-universal-nightly.apk") | .url' 2>/dev/null || true)
+            DL_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app-gms-mobile-universal-nightly.apk") | .url' 2>/dev/null || true)
 
             if [ -n "$DL_URL" ]; then
               echo "Downloading universal APK from release..."

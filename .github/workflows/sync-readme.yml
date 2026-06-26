@@ -108,7 +108,7 @@ jobs:
 
           if [ -n "$RELEASE_JSON" ]; then
             # Find the universal APK asset
-            DL_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app-mobile-universal-nightly.apk") | .url' 2>/dev/null || true)
+            DL_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app-gms-mobile-universal-nightly.apk") | .url' 2>/dev/null || true)
 
             if [ -n "$DL_URL" ]; then
               echo "Downloading universal APK from release..."
