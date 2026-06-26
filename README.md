@@ -57,11 +57,11 @@ You may copy, distribute and modify the software as long as you track changes/da
 The following fingerprints are for the signing certificate used to sign all ArchiveTune Nightly releases.
 
 ```plaintext
-2C:19:C7:E8:07:61:2B:8E:94:51:1B:FD:72:67:07:64:5D:C2:58:AE
+FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
 ```
 
 ```plaintext
-67:E1:51:00:BB:80:93:01:78:3E:DC:B6:34:8F:A3:BB:F8:30:34:D9:1E:62:86:8A:91:05:3D:BD:70:DB:3F:18
+3A:97:D1:35:BC:92:82:8D:13:C3:47:BE:42:48:8C:99:01:DD:A7:11:87:AF:95:E2:F8:A8:F0:96:34:C7:0A:1D
 ```
 
 </div>
