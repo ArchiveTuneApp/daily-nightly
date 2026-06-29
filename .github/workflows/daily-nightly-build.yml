@@ -261,7 +261,7 @@ jobs:
           java-version: '21'
 
       - name: Setup Kotlin
-        uses: fwilhe2/setup-kotlin@v1.8
+        uses: fwilhe2/setup-kotlin@v1.9
 
       - name: Generate changelog
         run: kotlin .github/scripts/generate-changelog.main.kts
