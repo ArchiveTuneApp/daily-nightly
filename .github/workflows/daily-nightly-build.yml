@@ -289,9 +289,11 @@ jobs:
         if: env.OPENROUTER_API_KEY != ''
         run: |
           ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
+          ESCAPED_DIFF=$(jq -Rs . < changelog-diff.md)
 
-          PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note.
-          Each commit includes the list of changed files with their status (A=added, M=modified, D=removed, R=renamed) and line counts (+additions/-deletions). Use these file paths to understand what part of the app was changed and categorize accordingly.
+          PROMPT="Summarize the following commit messages and file changes into a clean, professional, and categorized release note.
+          The first section contains commit messages with authors. The second section contains the file changes per commit — each file shows its path, status (A=added, M=modified, D=removed, R=renamed), and line counts (+additions/-deletions).
+          Use the file paths to understand what part of the app was changed and categorize accordingly.
           Use these categories (only include categories that have relevant commits):
           - ✨ Features — new functionality
           - 🐞 Bug Fixes — fixes for issues
@@ -318,7 +320,10 @@ jobs:
           [Your highlight for the MVP committer here]
 
           Commits:
-          $ESCAPED_CHANGELOG"
+          $ESCAPED_CHANGELOG
+
+          File Changes:
+          $ESCAPED_DIFF"
 
           MAX_RETRIES=3
           RETRY_COUNT=0

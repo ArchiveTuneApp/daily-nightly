@@ -120,12 +120,12 @@ fun fetchCommitsSinceSha(owner: String, repo: String, branch: String, sha: Strin
     throw RuntimeException("No commits field in compare response: $json")
 }
 
-fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: String): String {
+fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: String): Pair<String, String> {
     val sb = StringBuilder()
     
     // Check if commits is empty
     if (commits.size() == 0) {
-        return buildString {
+        val emptyChangelog = buildString {
             append("## ✨ Changelog\n")
             append("\n")
             append("No new commits found for this time period.\n")
@@ -136,6 +136,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
             append(logOutput)
             append("```\n")
         }
+        return Pair(emptyChangelog, "")
     }
     
     // Commits are ordered newest-first (both APIs normalized to this convention)
@@ -147,6 +148,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
 
     val authorCommitCounts = mutableMapOf<String, Int>()
     val changelogEntries = StringBuilder()
+    val diffEntries = StringBuilder()
 
     for (commit in commitList) {
         try {
@@ -216,8 +218,9 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
             val authorsStr = allAuthors.joinToString(", ") { "@$it" }
             changelogEntries.append("- [`${sha.take(7)}`](https://github.com/$owner/$repo/commit/$sha) - **\"$message\"** by ($authorsStr)\n")
 
-            // Append changed files summary
+            // Write file changes to diff file
             if (files.isNotEmpty()) {
+                diffEntries.append("### ${sha.take(7)} — $message\n\n")
                 for (file in files) {
                     val changeType = when (file.status) {
                         "added" -> "A"
@@ -227,8 +230,9 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
                         else -> "M"
                     }
                     val stats = "+${file.additions}/-${file.deletions}"
-                    changelogEntries.append("  - `${file.filename}` ($changeType, $stats)\n")
+                    diffEntries.append("- `${file.filename}` ($changeType, $stats)\n")
                 }
+                diffEntries.append("\n")
             }
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
@@ -266,7 +270,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
     sb.append("\n")
     sb.append(changelogEntries.toString())
     
-    return sb.toString()
+    return Pair(sb.toString(), diffEntries.toString())
 }
 
 fun getCommitAuthorName(commitDetails: JsonObject): String {
@@ -343,11 +347,12 @@ fun main() {
         log("Found ${commits.size()} commit(s)")
         
         log("Formatting changelog...")
-        val changelog = formatChangelog(commits, logOutput.toString(), owner, repoName)
+        val (changelog, diffContent) = formatChangelog(commits, logOutput.toString(), owner, repoName)
         
         log("Writing changelog to file...")
         File("changelog.md").writeText(changelog)
-        log("✅ Changelog generated successfully: changelog.md")
+        File("changelog-diff.md").writeText(diffContent)
+        log("✅ Changelog generated successfully: changelog.md, changelog-diff.md")
 
     } catch (e: Exception) {
         System.err.println("Error: Unexpected error generating changelog - ${e.message}")
