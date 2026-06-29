@@ -82,7 +82,8 @@ data class CommitFiles(
     val filename: String,
     val status: String,   // added, modified, removed, renamed
     val additions: Int,
-    val deletions: Int
+    val deletions: Int,
+    val patch: String?    // actual diff content
 )
 
 fun fetchCommitFiles(owner: String, repo: String, sha: String): List<CommitFiles> {
@@ -98,7 +99,8 @@ fun fetchCommitFiles(owner: String, repo: String, sha: String): List<CommitFiles
             filename = obj.get("filename").asString,
             status = obj.get("status").asString,
             additions = obj.get("additions").asInt,
-            deletions = obj.get("deletions").asInt
+            deletions = obj.get("deletions").asInt,
+            patch = if (obj.has("patch") && !obj.get("patch").isJsonNull) obj.get("patch").asString else null
         )
     }
 }
@@ -218,7 +220,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
             val authorsStr = allAuthors.joinToString(", ") { "@$it" }
             changelogEntries.append("- [`${sha.take(7)}`](https://github.com/$owner/$repo/commit/$sha) - **\"$message\"** by ($authorsStr)\n")
 
-            // Write file changes to diff file
+            // Write file changes with actual diffs to diff file
             if (files.isNotEmpty()) {
                 diffEntries.append("### ${sha.take(7)} — $message\n\n")
                 for (file in files) {
@@ -230,9 +232,11 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
                         else -> "M"
                     }
                     val stats = "+${file.additions}/-${file.deletions}"
-                    diffEntries.append("- `${file.filename}` ($changeType, $stats)\n")
+                    diffEntries.append("#### `${file.filename}` ($changeType, $stats)\n\n")
+                    if (file.patch != null) {
+                        diffEntries.append("```diff\n${file.patch}\n```\n\n")
+                    }
                 }
-                diffEntries.append("\n")
             }
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
