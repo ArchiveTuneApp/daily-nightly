@@ -291,17 +291,18 @@ jobs:
           ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
 
           PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note.
+          Each commit includes the list of changed files with their status (A=added, M=modified, D=removed, R=renamed) and line counts (+additions/-deletions). Use these file paths to understand what part of the app was changed and categorize accordingly.
           Use these categories (only include categories that have relevant commits):
           - ✨ Features — new functionality
           - 🐞 Bug Fixes — fixes for issues
           - 🚀 Improvements — enhancements to existing features
-          - 🎨 UI — visual changes, layouts, themes, animations
-          - 🎵 Audio — playback, streaming, audio-related changes
-          - 🌐 Translation — localization, language updates
+          - 🎨 UI — visual changes, layouts, themes, animations (e.g. files in ui/player, ui/screens, *.kt with Compose)
+          - 🎵 Audio — playback, streaming, audio-related changes (e.g. files in playback, MediaSession, ExoPlayer)
+          - 🌐 Translation — localization, language updates (e.g. files in values-*, strings.xml)
           - ⚡ Performance — speed, memory, efficiency improvements
-          - 🔧 Logic — business logic, data handling, backend changes
+          - 🔧 Logic — business logic, data handling, backend changes (e.g. files in models, db, data layer)
           - 🧹 Refactor — code restructuring without behavior change
-          - 📦 Dependencies — library updates, version bumps
+          - 📦 Dependencies — library updates, version bumps (e.g. build.gradle, libs.versions.toml)
           - 🛡️ Security — vulnerability fixes, permission changes
           - 📝 Docs — documentation, comments, README updates
           Keep it concise and highlight the most important changes.

@@ -77,6 +77,32 @@ fun fetchCommits(owner: String, repo: String, branch: String, since: String, unt
     return gson.fromJson(json, JsonArray::class.java)
 }
 
+data class CommitFiles(
+    val sha: String,
+    val filename: String,
+    val status: String,   // added, modified, removed, renamed
+    val additions: Int,
+    val deletions: Int
+)
+
+fun fetchCommitFiles(owner: String, repo: String, sha: String): List<CommitFiles> {
+    val url = "https://api.github.com/repos/$owner/$repo/commits/$sha"
+    val json = fetch(url)
+    val root = gson.fromJson(json, JsonObject::class.java)
+    if (!root.has("files")) return emptyList()
+    val files = root.getAsJsonArray("files")
+    return files.map { file ->
+        val obj = file.asJsonObject
+        CommitFiles(
+            sha = sha,
+            filename = obj.get("filename").asString,
+            status = obj.get("status").asString,
+            additions = obj.get("additions").asInt,
+            deletions = obj.get("deletions").asInt
+        )
+    }
+}
+
 fun fetchCommitsSinceSha(owner: String, repo: String, branch: String, sha: String): JsonArray {
     val url = "https://api.github.com/repos/$owner/$repo/compare/$sha...$branch"
     log("Fetching commits from compare API: $url")
@@ -94,7 +120,7 @@ fun fetchCommitsSinceSha(owner: String, repo: String, branch: String, sha: Strin
     throw RuntimeException("No commits field in compare response: $json")
 }
 
-fun formatChangelog(commits: JsonArray, logOutput: String): String {
+fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: String): String {
     val sb = StringBuilder()
     
     // Check if commits is empty
@@ -178,9 +204,32 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 "Unknown Date"
             }
 
+            // Fetch changed files for this commit
+            val files = try {
+                fetchCommitFiles(owner, repo, sha)
+            } catch (e: Exception) {
+                log("Warning: Could not fetch files for ${sha.take(7)}: ${e.message}")
+                emptyList()
+            }
+
             // Create log line with all authors
             val authorsStr = allAuthors.joinToString(", ") { "@$it" }
-            changelogEntries.append("- [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by ($authorsStr)\n")
+            changelogEntries.append("- [`${sha.take(7)}`](https://github.com/$owner/$repo/commit/$sha) - **\"$message\"** by ($authorsStr)\n")
+
+            // Append changed files summary
+            if (files.isNotEmpty()) {
+                for (file in files) {
+                    val changeType = when (file.status) {
+                        "added" -> "A"
+                        "modified" -> "M"
+                        "removed" -> "D"
+                        "renamed" -> "R"
+                        else -> "M"
+                    }
+                    val stats = "+${file.additions}/-${file.deletions}"
+                    changelogEntries.append("  - `${file.filename}` ($changeType, $stats)\n")
+                }
+            }
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
             continue
@@ -294,7 +343,7 @@ fun main() {
         log("Found ${commits.size()} commit(s)")
         
         log("Formatting changelog...")
-        val changelog = formatChangelog(commits, logOutput.toString())
+        val changelog = formatChangelog(commits, logOutput.toString(), owner, repoName)
         
         log("Writing changelog to file...")
         File("changelog.md").writeText(changelog)
