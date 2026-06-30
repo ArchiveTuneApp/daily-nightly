@@ -288,8 +288,7 @@ jobs:
         id: ai_summary
         if: env.OPENROUTER_API_KEY != ''
         run: |
-          chmod +x .github/scripts/ai-summary.sh
-          AI_TEXT=$(.github/scripts/ai-summary.sh) || true
+          AI_TEXT=$(python3 .github/scripts/ai-summary.py) || true
           if [ -z "$AI_TEXT" ]; then
             echo "AI summarization failed" >&2
             echo "summary=" >> $GITHUB_OUTPUT
