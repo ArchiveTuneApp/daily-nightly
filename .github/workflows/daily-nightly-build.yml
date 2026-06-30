@@ -307,6 +307,7 @@ jobs:
           - 🛡️ Security — vulnerability fixes, permission changes
           - 📝 Docs — documentation, comments, README updates
           Keep it concise and highlight the most important changes.
+          IMPORTANT: Do NOT include raw code diffs or file paths in the release note. Summarize changes in natural language only.
 
           Additionally, look at the '## 🏆 MVP Committer' section in the provided text.
           Pick the most impactful commit from that specific user and write a short 'MVP Highlight' (1-2 sentences) explaining why it was their best contribution.
