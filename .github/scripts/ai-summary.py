@@ -10,7 +10,7 @@ import urllib.request
 CHANGELOG_FILE = sys.argv[1] if len(sys.argv) > 1 else "changelog.md"
 DIFF_FILE = sys.argv[2] if len(sys.argv) > 2 else "changelog-diff.md"
 API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-MODEL = "google/gemma-4-31b-it:free"
+MODEL = "google/gemini-2.5-flash-exp-08-27:free"
 
 if not API_KEY:
     print("Error: OPENROUTER_API_KEY not set", file=sys.stderr)

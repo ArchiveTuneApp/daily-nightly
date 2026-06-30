@@ -404,7 +404,7 @@ jobs:
           PROMPT_EOF
 
           jq -n \
-            --arg model "google/gemma-4-31b-it:free" \
+            --arg model "google/gemini-2.5-flash-exp-08-27:free" \
             --rawfile content /tmp/discord_prompt.txt \
             '{model: $model, messages: [{role: "user", content: $content}]}' \
             > /tmp/discord_payload.json
